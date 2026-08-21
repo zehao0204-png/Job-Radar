@@ -7,12 +7,11 @@ const PAGE_SIZE = 15;
 const industries: Array<'全部' | Industry> = ['全部', '互联网', '汽车', '芯片', '制造业', '咨询'];
 const statuses: Array<'全部状态' | RecruitmentStatus> = ['全部状态', '开放', '预热', '待开放', '待核验'];
 
-export function CompanyExplorer({ companies, signedIn, signInHref }: { companies: Company[]; signedIn: boolean; signInHref: string }) {
+export function CompanyExplorer({ companies }: { companies: Company[] }) {
   const [query, setQuery] = useState('');
   const [industry, setIndustry] = useState<(typeof industries)[number]>('全部');
   const [status, setStatus] = useState<(typeof statuses)[number]>('全部状态');
   const [page, setPage] = useState(1);
-  const [followed, setFollowed] = useState<string[]>([]);
 
   const filtered = useMemo(() => companies.filter((company) => {
     const matchesQuery = !query || company.name.toLowerCase().includes(query.trim().toLowerCase());
@@ -56,11 +55,6 @@ export function CompanyExplorer({ companies, signedIn, signInHref }: { companies
             <div><p className="text-xs text-[#a3a8b2]">截止：{company.deadline}</p><p className="mt-1 text-[11px] text-[#a3a8b2]">核验：{company.verifiedAt}</p></div>
             <div className="flex items-center gap-2 md:justify-end">
               <a href={company.url} target="_blank" rel="noreferrer" className="rounded-lg bg-[#242a36] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-[#11151d]">官方投递入口 ↗</a>
-              {signedIn ? (
-                <button onClick={() => setFollowed((items) => items.includes(company.id) ? items.filter((id) => id !== company.id) : [...items, company.id])} aria-label={`${followed.includes(company.id) ? '取消关注' : '关注'}${company.name}`} className={`grid h-8 w-8 place-items-center rounded-lg border text-sm ${followed.includes(company.id) ? 'border-[#7774f5] bg-[#eeedff] text-[#5c59e8]' : 'border-[#e5e7eb] text-[#8b92a0]'}`}>{followed.includes(company.id) ? '✓' : '＋'}</button>
-              ) : (
-                <a href={signInHref} aria-label={`登录后关注${company.name}`} className="grid h-8 w-8 place-items-center rounded-lg border border-[#e5e7eb] text-sm text-[#8b92a0]">＋</a>
-              )}
             </div>
           </article>
         ))}

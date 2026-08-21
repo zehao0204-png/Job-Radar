@@ -1,10 +1,10 @@
 import Link from 'next/link';
-import { chatGPTSignInPath, getChatGPTUser } from './chatgpt-auth';
+import { requireChatGPTUser } from './chatgpt-auth';
 import { companies, industryCounts } from '../data/companies';
 import { CompanyExplorer } from './company-explorer';
 
 export default async function Home() {
-  const user = await getChatGPTUser();
+  await requireChatGPTUser('/');
 
   return (
     <main className="min-h-screen bg-[#f6f7f9] text-[#19202e]">
@@ -16,15 +16,10 @@ export default async function Home() {
             <span className="rounded-full bg-[#eeedff] px-2 py-0.5 text-[10px] font-bold tracking-wider text-[#5c59e8]">2027</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm text-[#687083] md:flex">
-            <Link className="font-semibold text-[#242a36]" href="/">招聘情报</Link>
-            <Link className="transition hover:text-[#242a36]" href="/applications">我的投递</Link>
-            <Link className="transition hover:text-[#242a36]" href="/applications">提醒中心</Link>
+            <Link className="font-semibold text-[#242a36]" href="/">公司入口</Link>
+            <Link className="transition hover:text-[#242a36]" href="/applications">投递看板</Link>
           </nav>
-          {user ? (
-            <Link href="/applications" className="rounded-xl bg-[#f1f2f5] px-4 py-2 text-sm font-semibold">我的看板</Link>
-          ) : (
-            <a href={chatGPTSignInPath('/applications')} className="rounded-xl bg-[#242a36] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#11151d]">登录 / 注册</a>
-          )}
+          <Link href="/applications" className="rounded-xl bg-[#242a36] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#11151d]">打开投递看板</Link>
         </div>
       </header>
 
@@ -42,9 +37,12 @@ export default async function Home() {
               </div>
             </section>
             <section className="rounded-2xl bg-[#242a36] p-5 text-white shadow-[0_18px_35px_rgba(23,28,38,.12)]">
-              <p className="text-sm font-semibold">不错过开放时间</p>
-              <p className="mt-2 text-xs leading-5 text-white/60">关注目标公司，状态变化和临近截止时第一时间提醒。</p>
-              <a href={user ? '/applications' : chatGPTSignInPath('/applications')} className="mt-4 block rounded-xl bg-white px-3 py-2.5 text-center text-xs font-semibold text-[#242a36]">开启我的提醒</a>
+              <p className="text-sm font-semibold">我的使用顺序</p>
+              <ol className="mt-4 space-y-3 text-xs text-white/70">
+                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">01</span><span>找到公司官方入口</span></li>
+                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">02</span><span>在官网完成投递</span></li>
+                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">03</span><span>回到看板记录进展</span></li>
+              </ol>
             </section>
           </div>
         </aside>
@@ -52,10 +50,10 @@ export default async function Home() {
         <div className="min-w-0">
           <section className="relative overflow-hidden rounded-[28px] bg-[#5c59e8] px-6 py-7 text-white shadow-[0_20px_45px_rgba(92,89,232,.18)] sm:px-8">
             <div className="relative z-10 max-w-2xl">
-              <p className="text-xs font-semibold tracking-[.18em] text-white/65">2027 届校招情报台</p>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">今天，别错过任何一家目标公司</h1>
-              <p className="mt-2 text-sm leading-6 text-white/70">聚合 120 家名企官方校招入口，持续核验开放状态与截止时间。</p>
-              <a href="#company-list" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#4c49c9] shadow-lg">搜索 120 家公司 <span>↓</span></a>
+              <p className="text-xs font-semibold tracking-[.18em] text-white/65">我的 2027 届秋招工作台</p>
+              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">把每一次投递，都放回同一张桌面</h1>
+              <p className="mt-2 text-sm leading-6 text-white/70">查官方入口、记投递日期、推面试阶段。先服务好我自己的秋招节奏。</p>
+              <a href="#company-list" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#4c49c9] shadow-lg">开始查公司 <span>↓</span></a>
             </div>
             <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full border-[42px] border-white/10" />
             <div className="pointer-events-none absolute bottom-[-90px] right-40 h-44 w-44 rounded-full bg-[#7774f5]" />
@@ -75,7 +73,7 @@ export default async function Home() {
             ))}
           </section>
 
-          <CompanyExplorer companies={companies} signedIn={Boolean(user)} signInHref={chatGPTSignInPath('/')} />
+          <CompanyExplorer companies={companies} />
         </div>
       </div>
     </main>
