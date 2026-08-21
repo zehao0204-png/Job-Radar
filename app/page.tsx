@@ -3,72 +3,99 @@ import { requireChatGPTUser } from './chatgpt-auth';
 import { companies, industryCounts } from '../data/companies';
 import { CompanyExplorer } from './company-explorer';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   await requireChatGPTUser('/');
+  const openCount = companies.filter((company) => company.status === '开放').length;
+  const pendingCount = companies.filter((company) => company.status === '待核验').length;
 
   return (
-    <main className="min-h-screen bg-[#f6f7f9] text-[#19202e]">
-      <header className="sticky top-0 z-20 border-b border-[#e8ebf0] bg-white/95 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-5 lg:px-8">
-          <Link href="/" className="flex items-center gap-3 font-semibold tracking-tight">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#5c59e8] text-lg text-white shadow-[0_6px_16px_rgba(92,89,232,.24)]">秋</span>
-            <span className="text-lg">秋招雷达</span>
-            <span className="rounded-full bg-[#eeedff] px-2 py-0.5 text-[10px] font-bold tracking-wider text-[#5c59e8]">2027</span>
+    <main className="blueprint-grid min-h-screen text-[#172033]">
+      <header className="sticky top-0 z-30 border-b border-[#ccd5e9] bg-[#f7f9fc]/95 backdrop-blur-xl">
+        <div className="mx-auto flex h-[68px] max-w-[1480px] items-center justify-between px-5 lg:px-8">
+          <Link href="/" className="group flex items-center gap-3" aria-label="秋招雷达首页">
+            <span className="relative grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-[#3657d6] bg-[#3657d6] text-[11px] font-black tracking-tight text-white shadow-[0_0_0_4px_rgba(54,87,214,.08)]">
+              R<span className="absolute right-1.5 top-1 text-[7px] font-medium text-[#f3bf55]">27</span>
+            </span>
+            <span>
+              <strong className="display-cn block text-[17px] leading-none tracking-[.04em]">秋招雷达</strong>
+              <small className="utility mt-1 block text-[8px] tracking-[.2em] text-[#7d88a0]">PERSONAL DESK</small>
+            </span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm text-[#687083] md:flex">
-            <Link className="font-semibold text-[#242a36]" href="/">公司入口</Link>
-            <Link className="transition hover:text-[#242a36]" href="/applications">投递看板</Link>
+          <nav className="hidden items-center gap-1 rounded-full border border-[#d7deed] bg-white p-1 text-xs md:flex">
+            <Link className="rounded-full bg-[#172033] px-5 py-2.5 font-semibold text-white" href="/">公司入口</Link>
+            <Link className="rounded-full px-5 py-2.5 font-semibold text-[#5d6880] transition hover:bg-[#eef2fa] hover:text-[#172033]" href="/applications">投递航线</Link>
           </nav>
-          <Link href="/applications" className="rounded-xl bg-[#242a36] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#11151d]">打开投递看板</Link>
+          <Link href="/applications" className="utility inline-flex items-center gap-2 border-b border-[#3657d6] pb-1 text-[11px] font-bold tracking-[.08em] text-[#3657d6] transition hover:border-[#172033] hover:text-[#172033]">
+            OPEN BOARD <span aria-hidden="true">↗</span>
+          </Link>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-[1440px] gap-6 px-5 py-7 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-8">
+      <div className="mx-auto grid max-w-[1480px] gap-7 px-5 py-7 lg:grid-cols-[218px_minmax(0,1fr)] lg:px-8 lg:py-9">
         <aside className="hidden lg:block">
-          <div className="sticky top-24 space-y-8">
+          <div className="sticky top-28 space-y-9">
             <section>
-              <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-[.15em] text-[#a0a6b2]">公司行业</p>
-              <div className="space-y-1">
+              <div className="mb-4 flex items-center justify-between border-b border-[#cbd4e7] pb-3">
+                <p className="utility text-[10px] font-bold tracking-[.16em] text-[#526078]">行业索引</p>
+                <span className="utility text-[9px] text-[#98a1b3]">INDEX</span>
+              </div>
+              <div>
                 {industryCounts.map(({ name, count }, index) => (
-                  <a href="#company-list" key={name} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm transition ${index === 0 ? 'bg-white font-semibold text-[#5c59e8] shadow-sm' : 'text-[#697184] hover:bg-white/70'}`}>
-                    <span>{name === '全部' ? '全部公司' : name}</span><span className="text-xs text-[#a7acb7]">{count}</span>
+                  <a href="#company-list" key={name} className={`group flex items-center justify-between border-b border-[#e0e5ef] px-1 py-3 text-sm transition ${index === 0 ? 'font-bold text-[#3657d6]' : 'text-[#657088] hover:pl-2 hover:text-[#172033]'}`}>
+                    <span className="flex items-center gap-2">{index === 0 && <i className="h-1.5 w-1.5 rounded-full bg-[#f3b23c]" />}{name === '全部' ? '全部公司' : name}</span>
+                    <span className="utility text-[10px] text-[#96a0b4]">{String(count).padStart(3, '0')}</span>
                   </a>
                 ))}
               </div>
             </section>
-            <section className="rounded-2xl bg-[#242a36] p-5 text-white shadow-[0_18px_35px_rgba(23,28,38,.12)]">
-              <p className="text-sm font-semibold">我的使用顺序</p>
-              <ol className="mt-4 space-y-3 text-xs text-white/70">
-                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">01</span><span>找到公司官方入口</span></li>
-                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">02</span><span>在官网完成投递</span></li>
-                <li className="flex gap-3"><span className="font-semibold text-[#9d9aff]">03</span><span>回到看板记录进展</span></li>
+
+            <section className="border-l-2 border-[#3657d6] bg-white/65 px-5 py-4 shadow-[8px_10px_30px_rgba(34,49,83,.05)]">
+              <p className="utility text-[9px] font-bold tracking-[.16em] text-[#3657d6]">MY ROUTE / 03 STEPS</p>
+              <ol className="mt-4 space-y-4 text-xs text-[#5f6a80]">
+                {['查找公司官网入口', '完成网申并记录', '推进笔面试阶段'].map((item, index) => (
+                  <li key={item} className="flex items-center gap-3"><span className="utility grid h-5 w-5 place-items-center rounded-full border border-[#bcc7de] text-[8px] text-[#3657d6]">{index + 1}</span><span>{item}</span></li>
+                ))}
               </ol>
             </section>
           </div>
         </aside>
 
         <div className="min-w-0">
-          <section className="relative overflow-hidden rounded-[28px] bg-[#5c59e8] px-6 py-7 text-white shadow-[0_20px_45px_rgba(92,89,232,.18)] sm:px-8">
-            <div className="relative z-10 max-w-2xl">
-              <p className="text-xs font-semibold tracking-[.18em] text-white/65">我的 2027 届秋招工作台</p>
-              <h1 className="mt-3 text-2xl font-bold tracking-tight sm:text-3xl">把每一次投递，都放回同一张桌面</h1>
-              <p className="mt-2 text-sm leading-6 text-white/70">查官方入口、记投递日期、推面试阶段。先服务好我自己的秋招节奏。</p>
-              <a href="#company-list" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-[#4c49c9] shadow-lg">开始查公司 <span>↓</span></a>
+          <section className="relative min-h-[330px] overflow-hidden border border-[#c7d1e5] bg-[#fdfefe] px-6 py-7 shadow-[12px_14px_0_rgba(54,87,214,.06)] sm:px-10 sm:py-10 lg:px-12">
+            <div className="relative z-10 max-w-[670px]">
+              <div className="mb-8 flex items-center gap-3">
+                <span className="h-px w-10 bg-[#3657d6]" />
+                <p className="utility text-[10px] font-bold tracking-[.2em] text-[#3657d6]">27 CAMPUS / PRIVATE COMMAND DESK</p>
+              </div>
+              <h1 className="display-cn text-[clamp(2.5rem,5vw,4.7rem)] font-bold leading-[1.05] tracking-[-.055em] text-[#172033]">
+                今天，推进哪一家公司？
+              </h1>
+              <p className="mt-6 max-w-xl text-sm leading-7 text-[#667187]">把分散的官网入口和投递进度收回一张桌面。每次打开，只决定下一步往哪里走。</p>
+              <div className="mt-8 flex flex-wrap items-center gap-5">
+                <a href="#company-list" className="group inline-flex items-center gap-4 bg-[#3657d6] px-5 py-3.5 text-sm font-bold text-white shadow-[5px_5px_0_#f3b23c] transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#f3b23c]">进入公司索引 <span className="transition group-hover:translate-x-1">→</span></a>
+                <Link href="/applications" className="text-xs font-semibold text-[#536079] underline decoration-[#aab5cb] underline-offset-4 hover:text-[#3657d6]">查看我的投递航线</Link>
+              </div>
             </div>
-            <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full border-[42px] border-white/10" />
-            <div className="pointer-events-none absolute bottom-[-90px] right-40 h-44 w-44 rounded-full bg-[#7774f5]" />
+
+            <div className="radar-field pointer-events-none absolute -right-20 -top-20 hidden h-[430px] w-[430px] lg:block" aria-hidden="true">
+              <span className="radar-ring inset-[8%]" /><span className="radar-ring inset-[22%]" /><span className="radar-ring inset-[36%]" /><span className="radar-ring inset-[49%]" />
+              <span className="radar-cross radar-cross-x" /><span className="radar-cross radar-cross-y" />
+              <span className="radar-sweep" /><span className="radar-dot left-[31%] top-[38%]" /><span className="radar-dot left-[62%] top-[63%]" /><span className="radar-dot left-[53%] top-[25%]" />
+            </div>
+            <span className="utility absolute bottom-4 right-5 text-[8px] tracking-[.15em] text-[#a5adbd]">COORD / 27°N · AUTUMN</span>
           </section>
 
-          <section className="mt-6 grid gap-4 sm:grid-cols-3">
+          <section className="mt-7 grid border-y border-[#cbd4e7] bg-white/55 sm:grid-cols-3">
             {[
-              [String(companies.filter((company) => company.status === '开放').length), '家已核验开放', '官方来源'], ['1', '项正在预热', '持续跟进'], [String(companies.length), '家名企持续追踪', '五大热门行业'],
-            ].map(([value, label, meta], index) => (
-              <div key={label} className="rounded-2xl border border-[#e9ebef] bg-white p-5 shadow-[0_5px_18px_rgba(31,38,51,.035)]">
-                <div className="flex items-end justify-between gap-3">
-                  <strong className={`text-3xl tracking-tight ${index === 1 ? 'text-[#ef795f]' : 'text-[#272e3b]'}`}>{value}</strong>
-                  <span className={`rounded-full px-2 py-1 text-[10px] font-semibold ${index === 1 ? 'bg-[#fff2ee] text-[#e3654b]' : 'bg-[#f1f2f5] text-[#737b8c]'}`}>{meta}</span>
-                </div>
-                <p className="mt-2 text-sm text-[#777f8e]">{label}</p>
+              [String(openCount).padStart(2, '0'), '已核验开放', '来自官方公开信息'],
+              [String(pendingCount).padStart(2, '0'), '等待核验', '不等于尚未开放'],
+              [String(companies.length), '公司入口', '覆盖五个重点行业'],
+            ].map(([value, label, note], index) => (
+              <div key={label} className={`grid grid-cols-[auto_1fr] items-center gap-4 px-5 py-5 ${index < 2 ? 'border-b border-[#d8dfed] sm:border-b-0 sm:border-r' : ''}`}>
+                <strong className="utility text-3xl font-medium tracking-[-.08em] text-[#3657d6]">{value}</strong>
+                <div><p className="text-xs font-bold text-[#313c51]">{label}</p><p className="mt-1 text-[10px] text-[#8b95a8]">{note}</p></div>
               </div>
             ))}
           </section>

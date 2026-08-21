@@ -6,6 +6,12 @@ import type { Company, Industry, RecruitmentStatus } from '../data/companies';
 const PAGE_SIZE = 15;
 const industries: Array<'全部' | Industry> = ['全部', '互联网', '汽车', '芯片', '制造业', '咨询'];
 const statuses: Array<'全部状态' | RecruitmentStatus> = ['全部状态', '开放', '预热', '待开放', '待核验'];
+const statusClass: Record<RecruitmentStatus, string> = {
+  开放: 'border-[#88bca2] bg-[#f1faf5] text-[#237a51]',
+  预热: 'border-[#e5bd69] bg-[#fff8e9] text-[#a36608]',
+  待开放: 'border-[#cbd4e3] bg-[#f5f7fa] text-[#667187]',
+  待核验: 'border-[#d6dce7] bg-white text-[#7d879b]',
+};
 
 export function CompanyExplorer({ companies }: { companies: Company[] }) {
   const [query, setQuery] = useState('');
@@ -24,44 +30,71 @@ export function CompanyExplorer({ companies }: { companies: Company[] }) {
   const filter = (next: typeof industry) => { setIndustry(next); setPage(1); };
 
   return (
-    <section id="company-list" className="mt-6 overflow-hidden rounded-2xl border border-[#e8eaee] bg-white shadow-[0_8px_25px_rgba(31,38,51,.04)]">
-      <div className="border-b border-[#edf0f3] px-5 py-5 sm:px-6">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div><h2 className="font-bold">120 家公司官方入口</h2><p className="mt-1 text-xs text-[#9299a6]">开放状态只采用官方公开信息；待核验不代表未开放</p></div>
-          <label className="flex w-full items-center gap-2 rounded-xl border border-[#e2e5ea] bg-[#f8f9fb] px-3 py-2.5 focus-within:border-[#7774f5] xl:max-w-sm">
-            <span aria-hidden="true" className="text-[#969da9]">⌕</span>
-            <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#a8adb7]" placeholder="搜索公司名称" aria-label="搜索公司名称" />
-            {query && <button onClick={() => setQuery('')} className="text-xs text-[#8f96a2]" aria-label="清空搜索">清除</button>}
-          </label>
-        </div>
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-1 overflow-x-auto pb-1 text-xs">
-            {industries.map((item) => <button key={item} onClick={() => filter(item)} className={`whitespace-nowrap rounded-lg px-3 py-2 font-semibold ${industry === item ? 'bg-[#eeedff] text-[#5c59e8]' : 'text-[#7a8291] hover:bg-[#f5f6f8]'}`}>{item}</button>)}
+    <section id="company-list" className="mt-9 scroll-mt-24 border border-[#c7d1e5] bg-[#fbfcfe] shadow-[9px_10px_0_rgba(54,87,214,.045)]">
+      <div className="grid border-b border-[#cbd4e7] xl:grid-cols-[minmax(0,1fr)_400px]">
+        <div className="px-5 py-6 sm:px-7">
+          <div className="flex items-start gap-4">
+            <span className="utility mt-1 grid h-8 w-8 shrink-0 place-items-center bg-[#172033] text-[9px] font-bold text-white">A—Z</span>
+            <div>
+              <p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">COMPANY DIRECTORY / 120</p>
+              <h2 className="display-cn mt-2 text-2xl font-bold tracking-[-.03em]">名企官方入口索引</h2>
+              <p className="mt-2 text-xs leading-5 text-[#7a859a]">状态只采用官方公开信息；“待核验”不等于尚未开放。</p>
+            </div>
           </div>
-          <select value={status} onChange={(event) => { setStatus(event.target.value as typeof status); setPage(1); }} className="rounded-lg border border-[#e3e6eb] bg-white px-3 py-2 text-xs text-[#5e6675] outline-none" aria-label="招聘状态筛选">
-            {statuses.map((item) => <option key={item}>{item}</option>)}
-          </select>
+        </div>
+        <div className="flex items-center border-t border-[#d9e0ed] p-5 xl:border-l xl:border-t-0">
+          <label className="group flex w-full items-center gap-3 border-b-2 border-[#172033] bg-white px-1 py-3 focus-within:border-[#3657d6]">
+            <span aria-hidden="true" className="utility text-xs text-[#3657d6]">SEARCH /</span>
+            <input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[#9ba4b5]" placeholder="输入公司名称" aria-label="搜索公司名称" />
+            {query && <button onClick={() => setQuery('')} className="utility text-[9px] text-[#717c91] hover:text-[#3657d6]" aria-label="清空搜索">CLEAR ×</button>}
+          </label>
         </div>
       </div>
 
-      <div className="divide-y divide-[#f0f1f4]">
-        {visible.map((company) => (
-          <article key={company.id} className="grid gap-4 px-5 py-4 transition hover:bg-[#fafbfc] md:grid-cols-[minmax(190px,1fr)_130px_150px_210px] md:items-center sm:px-6">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#ebecef] bg-[#f8f8fa] px-1 text-center text-[11px] font-bold text-[#4b5361]">{company.name.slice(0, 3)}</span>
-              <div className="min-w-0"><h3 className="truncate text-sm font-semibold">{company.name}</h3><p className="mt-1 text-xs text-[#9ca2ae]">{company.industry} · {company.batch}</p></div>
-            </div>
-            <div><span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${company.status === '开放' ? 'bg-[#eaf8f0] text-[#279360]' : company.status === '预热' ? 'bg-[#fff5e4] text-[#d38820]' : company.status === '待开放' ? 'bg-[#f1f2f5] text-[#7e8490]' : 'bg-[#f2f3f5] text-[#979daa]'}`}><i className="mr-1.5 mt-[5px] h-1.5 w-1.5 rounded-full bg-current" />{company.status}</span></div>
-            <div><p className="text-xs text-[#a3a8b2]">截止：{company.deadline}</p><p className="mt-1 text-[11px] text-[#a3a8b2]">核验：{company.verifiedAt}</p></div>
-            <div className="flex items-center gap-2 md:justify-end">
-              <a href={company.url} target="_blank" rel="noreferrer" className="rounded-lg bg-[#242a36] px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-[#11151d]">官方投递入口 ↗</a>
-            </div>
-          </article>
-        ))}
-        {!visible.length && <div className="px-6 py-16 text-center text-sm text-[#8d94a0]">没有匹配的公司，换个关键词或筛选条件试试。</div>}
+      <div className="flex flex-col gap-4 border-b border-[#cbd4e7] bg-[#f2f5fa] px-5 py-4 lg:flex-row lg:items-center lg:justify-between sm:px-7">
+        <div className="flex gap-1 overflow-x-auto pb-1">
+          {industries.map((item, index) => <button key={item} onClick={() => filter(item)} className={`utility whitespace-nowrap border px-3 py-2 text-[10px] font-bold tracking-[.05em] transition ${industry === item ? 'border-[#3657d6] bg-[#3657d6] text-white' : 'border-transparent text-[#68748b] hover:border-[#b9c5db] hover:bg-white'}`}>{String(index).padStart(2, '0')} {item}</button>)}
+        </div>
+        <label className="flex items-center gap-3">
+          <span className="utility text-[9px] font-bold tracking-[.12em] text-[#7d8799]">STATUS</span>
+          <select value={status} onChange={(event) => { setStatus(event.target.value as typeof status); setPage(1); }} className="border border-[#bdc8dc] bg-white px-3 py-2 text-xs text-[#4f5b71] outline-none" aria-label="招聘状态筛选">
+            {statuses.map((item) => <option key={item}>{item}</option>)}
+          </select>
+        </label>
       </div>
-      {visible.length < filtered.length && <div className="border-t border-[#edf0f3] p-4 text-center"><button onClick={() => setPage((value) => value + 1)} className="rounded-xl border border-[#dfe2e7] px-5 py-2.5 text-xs font-semibold text-[#5e6675] hover:border-[#7774f5] hover:text-[#5c59e8]">继续加载 · 还有 {filtered.length - visible.length} 家</button></div>}
-      <p className="border-t border-[#f0f1f4] bg-[#fafbfc] px-6 py-3 text-center text-[11px] text-[#a0a6b1]">当前展示 {visible.length} / {filtered.length} 家匹配公司</p>
+
+      <div className="hidden grid-cols-[74px_minmax(210px,1fr)_120px_180px_190px] border-b border-[#cbd4e7] bg-white px-6 py-3 md:grid">
+        {['编号', '公司 / 行业', '状态', '时间坐标', '行动'].map((label) => <span key={label} className="utility text-[9px] font-bold tracking-[.14em] text-[#8d97a9]">{label}</span>)}
+      </div>
+
+      <div className="divide-y divide-[#dce2ed]">
+        {visible.map((company) => {
+          const companyIndex = companies.findIndex((item) => item.id === company.id) + 1;
+          return (
+            <article key={company.id} className="group grid gap-4 px-5 py-5 transition hover:bg-white md:grid-cols-[74px_minmax(210px,1fr)_120px_180px_190px] md:items-center sm:px-6">
+              <div className="utility flex items-center gap-3 text-[10px] text-[#8490a4]">
+                <span className="h-px w-4 bg-[#bcc7da] transition-all group-hover:w-7 group-hover:bg-[#3657d6]" />
+                {String(companyIndex).padStart(3, '0')}
+              </div>
+              <div className="min-w-0">
+                <h3 className="display-cn truncate text-[17px] font-bold tracking-[-.02em] text-[#202a3e]">{company.name}</h3>
+                <p className="utility mt-1.5 text-[9px] tracking-[.07em] text-[#8993a6]">{company.industry} / {company.batch}</p>
+              </div>
+              <div><span className={`inline-flex items-center gap-2 border px-2.5 py-1.5 text-[11px] font-bold ${statusClass[company.status]}`}><i className="h-1.5 w-1.5 rounded-full bg-current" />{company.status}</span></div>
+              <div className="text-[11px] leading-5 text-[#7b8699]"><p>截止 / {company.deadline}</p><p className="utility text-[9px] text-[#9aa3b4]">CHECK {company.verifiedAt}</p></div>
+              <div className="md:text-right">
+                <a href={company.url} target="_blank" rel="noreferrer" className="utility inline-flex items-center gap-4 border border-[#3657d6] px-4 py-2.5 text-[10px] font-bold tracking-[.04em] text-[#3657d6] transition hover:bg-[#3657d6] hover:text-white">官网投递入口 <span aria-hidden="true">↗</span></a>
+              </div>
+            </article>
+          );
+        })}
+        {!visible.length && <div className="px-6 py-20 text-center"><p className="utility text-[10px] tracking-[.15em] text-[#3657d6]">NO MATCHED COORDINATES</p><p className="mt-3 text-sm text-[#7d8799]">没有匹配的公司，换个关键词或筛选条件试试。</p></div>}
+      </div>
+
+      <div className="flex flex-col items-center justify-between gap-4 border-t border-[#cbd4e7] bg-[#f4f6fa] px-6 py-4 sm:flex-row">
+        <p className="utility text-[9px] tracking-[.08em] text-[#8892a5]">DISPLAY {String(visible.length).padStart(3, '0')} / MATCHED {String(filtered.length).padStart(3, '0')}</p>
+        {visible.length < filtered.length && <button onClick={() => setPage((value) => value + 1)} className="utility border-b border-[#3657d6] pb-1 text-[10px] font-bold tracking-[.08em] text-[#3657d6] transition hover:border-[#172033] hover:text-[#172033]">加载下一批 / {filtered.length - visible.length} →</button>}
+      </div>
     </section>
   );
 }
