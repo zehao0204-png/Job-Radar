@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { requireChatGPTUser } from './chatgpt-auth';
 import { companies, industryCounts } from '../data/companies';
 import { CompanyExplorer } from './company-explorer';
@@ -19,7 +18,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
     <main className="blueprint-grid min-h-screen text-[#172033]">
       <header className="sticky top-0 z-30 border-b border-[#ccd5e9] bg-[#f7f9fc]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-[68px] max-w-[1480px] items-center justify-between px-5 lg:px-8">
-          <Link href="/" className="group flex items-center gap-3" aria-label="秋招雷达首页">
+          <a href="/" className="group flex items-center gap-3" aria-label="秋招雷达首页">
             <span className="relative grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-[#3657d6] bg-[#3657d6] text-[11px] font-black tracking-tight text-white shadow-[0_0_0_4px_rgba(54,87,214,.08)]">
               R<span className="absolute right-1.5 top-1 text-[7px] font-medium text-[#f3bf55]">27</span>
             </span>
@@ -27,14 +26,14 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
               <strong className="display-cn block text-[17px] leading-none tracking-[.04em]">秋招雷达</strong>
               <small className="utility mt-1 block text-[8px] tracking-[.2em] text-[#7d88a0]">PERSONAL DESK</small>
             </span>
-          </Link>
+          </a>
           <nav className="relative z-40 hidden items-center gap-1 rounded-full border border-[#d7deed] bg-white p-1 text-xs md:flex" aria-label="主导航">
-            <Link className="inline-flex rounded-full bg-[#172033] px-5 py-2.5 font-semibold text-white" href="/">公司入口</Link>
-            <Link className="inline-flex rounded-full px-5 py-2.5 font-semibold text-[#5d6880] transition hover:bg-[#eef2fa] hover:text-[#172033]" href="/applications">投递航线</Link>
+            <a className="inline-flex rounded-full bg-[#172033] px-5 py-2.5 font-semibold text-white" href="/">公司入口</a>
+            <a className="inline-flex rounded-full px-5 py-2.5 font-semibold text-[#5d6880] transition hover:bg-[#eef2fa] hover:text-[#172033]" href="/applications">投递航线</a>
           </nav>
-          <Link href="/applications" className="utility inline-flex items-center gap-2 border-b border-[#3657d6] pb-1 text-[11px] font-bold tracking-[.08em] text-[#3657d6] transition hover:border-[#172033] hover:text-[#172033]">
+          <a href="/applications" className="utility inline-flex items-center gap-2 border-b border-[#3657d6] pb-1 text-[11px] font-bold tracking-[.08em] text-[#3657d6] transition hover:border-[#172033] hover:text-[#172033]">
             OPEN BOARD <span aria-hidden="true">↗</span>
-          </Link>
+          </a>
         </div>
       </header>
 
@@ -51,10 +50,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
                   const active = name === selectedIndustry;
                   const href = name === '全部' ? '/#company-list' : `/?industry=${encodeURIComponent(name)}#company-list`;
                   return (
-                  <Link href={href} key={name} aria-current={active ? 'true' : undefined} className={`group flex items-center justify-between border-b border-[#e0e5ef] px-1 py-3 text-sm transition ${active ? 'font-bold text-[#3657d6]' : 'text-[#657088] hover:pl-2 hover:text-[#172033]'}`}>
+                  <a href={href} key={name} aria-current={active ? 'true' : undefined} className={`group flex items-center justify-between border-b border-[#e0e5ef] px-1 py-3 text-sm transition ${active ? 'font-bold text-[#3657d6]' : 'text-[#657088] hover:pl-2 hover:text-[#172033]'}`}>
                     <span className="flex items-center gap-2">{active && <i className="h-1.5 w-1.5 rounded-full bg-[#f3b23c]" />}{name === '全部' ? '全部公司' : name}</span>
                     <span className="utility text-[10px] text-[#96a0b4]">{String(count).padStart(3, '0')}</span>
-                  </Link>
+                  </a>
                   );
                 })}
               </div>
@@ -84,7 +83,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ i
               <p className="mt-6 max-w-xl text-sm leading-7 text-[#667187]">把分散的官网入口和投递进度收回一张桌面。每次打开，只决定下一步往哪里走。</p>
               <div className="mt-8 flex flex-wrap items-center gap-5">
                 <a href="#company-list" className="group inline-flex items-center gap-4 bg-[#3657d6] px-5 py-3.5 text-sm font-bold text-white shadow-[5px_5px_0_#f3b23c] transition hover:-translate-y-0.5 hover:shadow-[7px_7px_0_#f3b23c]">进入公司索引 <span className="transition group-hover:translate-x-1">→</span></a>
-                <Link href="/applications" className="text-xs font-semibold text-[#536079] underline decoration-[#aab5cb] underline-offset-4 hover:text-[#3657d6]">查看我的投递航线</Link>
+                <a href="/applications" className="text-xs font-semibold text-[#536079] underline decoration-[#aab5cb] underline-offset-4 hover:text-[#3657d6]">查看我的投递航线</a>
               </div>
             </div>
 
