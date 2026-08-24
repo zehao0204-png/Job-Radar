@@ -13,7 +13,7 @@ export function DeskShell({ initialView, userName, signOutHref }: { initialView:
   const [industry, setIndustry] = useState<'全部' | Industry>('全部');
   const openCount = companies.filter((company) => company.status === '开放').length;
   const preheatCount = companies.filter((company) => company.status === '预热').length;
-  const pendingCount = companies.filter((company) => company.status === '待开放').length;
+  const pendingCount = companies.filter((company) => company.status === '待核验').length;
 
   useEffect(() => {
     const syncView = () => setView(window.location.pathname === '/applications' ? 'applications' : 'companies');
@@ -86,7 +86,7 @@ export function DeskShell({ initialView, userName, signOutHref }: { initialView:
             </section>
 
             <section className="mt-7 grid border-y border-[#cbd4e7] bg-white/55 sm:grid-cols-3">
-              {[[String(openCount).padStart(2, '0'), '已核验开放', '来自官方公开信息'], [String(pendingCount).padStart(2, '0'), '待开放', `另有 ${preheatCount} 家预热`], [String(companies.length), '公司入口', '覆盖五个重点行业']].map(([value, label, note], index) => <div key={label} className={`grid grid-cols-[auto_1fr] items-center gap-4 px-5 py-5 ${index < 2 ? 'border-b border-[#d8dfed] sm:border-b-0 sm:border-r' : ''}`}><strong className="utility text-3xl font-medium tracking-[-.08em] text-[#3657d6]">{value}</strong><div><p className="text-xs font-bold text-[#313c51]">{label}</p><p className="mt-1 text-[10px] text-[#8b95a8]">{note}</p></div></div>)}
+              {[[String(openCount).padStart(2, '0'), '已核验开放', '有明确27届招聘证据'], [String(pendingCount).padStart(2, '0'), '待核验', `另有 ${preheatCount} 家预热`], [String(companies.length), '公司入口', '覆盖五个重点行业']].map(([value, label, note], index) => <div key={label} className={`grid grid-cols-[auto_1fr] items-center gap-4 px-5 py-5 ${index < 2 ? 'border-b border-[#d8dfed] sm:border-b-0 sm:border-r' : ''}`}><strong className="utility text-3xl font-medium tracking-[-.08em] text-[#3657d6]">{value}</strong><div><p className="text-xs font-bold text-[#313c51]">{label}</p><p className="mt-1 text-[10px] text-[#8b95a8]">{note}</p></div></div>)}
             </section>
 
             <CompanyExplorer companies={companies} selectedIndustry={industry} />
