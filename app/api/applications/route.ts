@@ -5,7 +5,7 @@ import { ensureSchema, getDb } from '../../../db';
 import { getChatGPTUser } from '../../chatgpt-auth';
 import { companies } from '../../../data/companies';
 
-const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束'];
+const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束', '已终止'];
 
 async function authorizedDb() {
   const user = await getChatGPTUser();

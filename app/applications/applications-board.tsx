@@ -4,8 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { companies } from '../../data/companies';
 import type { Application } from '../../db/schema';
 
-const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束'];
-const activeStages = stages.slice(0, 7);
+const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束', '已终止'];
 
 export function ApplicationsBoard() {
   const [items, setItems] = useState<Application[]>([]);
@@ -13,6 +12,8 @@ export function ApplicationsBoard() {
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [companyName, setCompanyName] = useState('');
+  const [companyId, setCompanyId] = useState('');
 
   useEffect(() => {
     fetch('/api/applications').then(async (response) => {
@@ -35,7 +36,7 @@ export function ApplicationsBoard() {
     const body = await response.json() as Application & { error?: string };
     setSaving(false);
     if (!response.ok) return setError(body.error || '保存失败');
-    setItems((current) => [body, ...current]); form.reset(); setShowForm(false);
+    setItems((current) => [body, ...current]); form.reset(); setCompanyName(''); setCompanyId(''); setShowForm(false);
   }
 
   async function changeStage(id: string, stage: string) {
@@ -79,12 +80,12 @@ export function ApplicationsBoard() {
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <div><p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">ROUTE MAP / 07 STATIONS</p><h2 className="display-cn mt-2 text-xl font-bold">推进路径</h2></div>
+          <div><p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">ROUTE MAP / 09 STATIONS</p><h2 className="display-cn mt-2 text-xl font-bold">推进路径</h2></div>
           <p className="utility hidden text-[8px] tracking-[.1em] text-[#98a2b4] sm:block">SCROLL HORIZONTALLY →</p>
         </div>
         <div className="overflow-x-auto border-y border-[#cbd4e7] pb-4 pt-4">
-          <div className="grid min-w-[1190px] grid-cols-7 gap-px bg-[#cbd4e7] border-x border-[#cbd4e7]">
-            {activeStages.map((stage, stageIndex) => {
+          <div className="grid min-w-[1530px] grid-cols-9 gap-px bg-[#cbd4e7] border-x border-[#cbd4e7]">
+            {stages.map((stage, stageIndex) => {
               const stageItems = items.filter((item) => item.stage === stage);
               return <div key={stage} className="min-h-[380px] bg-[#f4f6fa]">
                 <div className="border-b border-[#cbd4e7] bg-[#eef2f8] px-4 py-4">
@@ -112,7 +113,23 @@ export function ApplicationsBoard() {
         <section role="dialog" aria-modal="true" aria-labelledby="new-application-title" className="max-h-[90vh] w-full max-w-xl overflow-y-auto border border-[#9facc5] bg-[#fdfefe] p-6 shadow-[10px_10px_0_rgba(243,178,60,.55)] sm:p-8">
           <div className="flex items-start justify-between gap-5"><div><p className="utility text-[9px] font-bold tracking-[.16em] text-[#3657d6]">NEW COORDINATE</p><h2 id="new-application-title" className="display-cn mt-2 text-2xl font-bold">新增投递记录</h2><p className="mt-2 text-xs leading-5 text-[#7c8799]">信息由你手动记录，不会同步到企业官网。</p></div><button onClick={() => setShowForm(false)} className="utility grid h-9 w-9 shrink-0 place-items-center border border-[#c7d0df] text-[#677389] hover:border-[#3657d6] hover:text-[#3657d6]" aria-label="关闭">×</button></div>
           <form onSubmit={addApplication} className="mt-7 grid gap-4 sm:grid-cols-2">
-            <Field label="公司 *" wide><select name="companyId" required className="route-input"><option value="">请选择公司</option>{companies.map((company) => <option key={company.id} value={company.id}>{company.name} · {company.industry}</option>)}</select></Field>
+            <Field label="公司 *" wide>
+              <input
+                value={companyName}
+                onChange={(event) => {
+                  const name = event.target.value;
+                  setCompanyName(name);
+                  setCompanyId(companies.find((company) => company.name === name)?.id ?? '');
+                }}
+                list="company-options"
+                placeholder="输入公司名称搜索"
+                autoComplete="off"
+                required
+                className="route-input"
+              />
+              <input type="hidden" name="companyId" value={companyId} />
+              <datalist id="company-options">{companies.map((company) => <option key={company.id} value={company.name}>{company.industry}</option>)}</datalist>
+            </Field>
             <Field label="岗位名称 *" wide><input name="position" required maxLength={80} placeholder="例如：产品经理" className="route-input" /></Field>
             <Field label="投递日期"><input name="appliedAt" type="date" defaultValue={new Date().toISOString().slice(0, 10)} className="route-input" /></Field>
             <Field label="当前阶段"><select name="stage" defaultValue="已投递" className="route-input">{stages.map((stage) => <option key={stage}>{stage}</option>)}</select></Field>
