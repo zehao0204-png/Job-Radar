@@ -1,10 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Company, Industry, RecruitmentStatus } from '../data/companies';
 
 const PAGE_SIZE = 15;
-const industries: Array<'全部' | Industry> = ['全部', '互联网', '汽车', '芯片', '制造业', '咨询'];
 const statuses: Array<'全部状态' | RecruitmentStatus> = ['全部状态', '开放', '预热', '待开放', '待核验'];
 const statusClass: Record<RecruitmentStatus, string> = {
   开放: 'border-[#88bca2] bg-[#f1faf5] text-[#237a51]',
@@ -13,22 +12,21 @@ const statusClass: Record<RecruitmentStatus, string> = {
   待核验: 'border-[#d6dce7] bg-white text-[#7d879b]',
 };
 
-export function CompanyExplorer({ companies }: { companies: Company[] }) {
+export function CompanyExplorer({ companies, selectedIndustry }: { companies: Company[]; selectedIndustry: '全部' | Industry }) {
   const [query, setQuery] = useState('');
-  const [industry, setIndustry] = useState<(typeof industries)[number]>('全部');
   const [status, setStatus] = useState<(typeof statuses)[number]>('全部状态');
   const [page, setPage] = useState(1);
 
+  useEffect(() => setPage(1), [selectedIndustry]);
+
   const filtered = useMemo(() => companies.filter((company) => {
     const matchesQuery = !query || company.name.toLowerCase().includes(query.trim().toLowerCase());
-    const matchesIndustry = industry === '全部' || company.industry === industry;
+    const matchesIndustry = selectedIndustry === '全部' || company.industry === selectedIndustry;
     const matchesStatus = status === '全部状态' || company.status === status;
     return matchesQuery && matchesIndustry && matchesStatus;
-  }), [companies, industry, query, status]);
+  }), [companies, query, selectedIndustry, status]);
 
   const visible = filtered.slice(0, page * PAGE_SIZE);
-  const filter = (next: typeof industry) => { setIndustry(next); setPage(1); };
-
   return (
     <section id="company-list" className="mt-9 scroll-mt-24 border border-[#c7d1e5] bg-[#fbfcfe] shadow-[9px_10px_0_rgba(54,87,214,.045)]">
       <div className="grid border-b border-[#cbd4e7] xl:grid-cols-[minmax(0,1fr)_400px]">
@@ -51,10 +49,8 @@ export function CompanyExplorer({ companies }: { companies: Company[] }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 border-b border-[#cbd4e7] bg-[#f2f5fa] px-5 py-4 lg:flex-row lg:items-center lg:justify-between sm:px-7">
-        <div className="flex gap-1 overflow-x-auto pb-1">
-          {industries.map((item, index) => <button key={item} onClick={() => filter(item)} className={`utility whitespace-nowrap border px-3 py-2 text-[10px] font-bold tracking-[.05em] transition ${industry === item ? 'border-[#3657d6] bg-[#3657d6] text-white' : 'border-transparent text-[#68748b] hover:border-[#b9c5db] hover:bg-white'}`}>{String(index).padStart(2, '0')} {item}</button>)}
-        </div>
+      <div className="flex items-center justify-between gap-4 border-b border-[#cbd4e7] bg-[#f2f5fa] px-5 py-4 sm:px-7">
+        <p className="text-xs font-semibold text-[#5f6b81]">当前行业：<span className="text-[#3657d6]">{selectedIndustry === '全部' ? '全部公司' : selectedIndustry}</span></p>
         <label className="flex items-center gap-3">
           <span className="utility text-[9px] font-bold tracking-[.12em] text-[#7d8799]">STATUS</span>
           <select value={status} onChange={(event) => { setStatus(event.target.value as typeof status); setPage(1); }} className="border border-[#bdc8dc] bg-white px-3 py-2 text-xs text-[#4f5b71] outline-none" aria-label="招聘状态筛选">

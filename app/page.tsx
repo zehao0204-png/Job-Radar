@@ -2,11 +2,16 @@ import Link from 'next/link';
 import { requireChatGPTUser } from './chatgpt-auth';
 import { companies, industryCounts } from '../data/companies';
 import { CompanyExplorer } from './company-explorer';
+import type { Industry } from '../data/companies';
 
 export const dynamic = 'force-dynamic';
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ industry?: string | string[] }> }) {
   await requireChatGPTUser('/');
+  const rawIndustry = (await searchParams).industry;
+  const selectedIndustry: '全部' | Industry = typeof rawIndustry === 'string' && industryCounts.some(({ name }) => name === rawIndustry)
+    ? rawIndustry as '全部' | Industry
+    : '全部';
   const openCount = companies.filter((company) => company.status === '开放').length;
   const pendingCount = companies.filter((company) => company.status === '待核验').length;
 
@@ -23,9 +28,9 @@ export default async function Home() {
               <small className="utility mt-1 block text-[8px] tracking-[.2em] text-[#7d88a0]">PERSONAL DESK</small>
             </span>
           </Link>
-          <nav className="hidden items-center gap-1 rounded-full border border-[#d7deed] bg-white p-1 text-xs md:flex">
-            <Link className="rounded-full bg-[#172033] px-5 py-2.5 font-semibold text-white" href="/">公司入口</Link>
-            <Link className="rounded-full px-5 py-2.5 font-semibold text-[#5d6880] transition hover:bg-[#eef2fa] hover:text-[#172033]" href="/applications">投递航线</Link>
+          <nav className="relative z-40 hidden items-center gap-1 rounded-full border border-[#d7deed] bg-white p-1 text-xs md:flex" aria-label="主导航">
+            <Link className="inline-flex rounded-full bg-[#172033] px-5 py-2.5 font-semibold text-white" href="/">公司入口</Link>
+            <Link className="inline-flex rounded-full px-5 py-2.5 font-semibold text-[#5d6880] transition hover:bg-[#eef2fa] hover:text-[#172033]" href="/applications">投递航线</Link>
           </nav>
           <Link href="/applications" className="utility inline-flex items-center gap-2 border-b border-[#3657d6] pb-1 text-[11px] font-bold tracking-[.08em] text-[#3657d6] transition hover:border-[#172033] hover:text-[#172033]">
             OPEN BOARD <span aria-hidden="true">↗</span>
@@ -42,12 +47,16 @@ export default async function Home() {
                 <span className="utility text-[9px] text-[#98a1b3]">INDEX</span>
               </div>
               <div>
-                {industryCounts.map(({ name, count }, index) => (
-                  <a href="#company-list" key={name} className={`group flex items-center justify-between border-b border-[#e0e5ef] px-1 py-3 text-sm transition ${index === 0 ? 'font-bold text-[#3657d6]' : 'text-[#657088] hover:pl-2 hover:text-[#172033]'}`}>
-                    <span className="flex items-center gap-2">{index === 0 && <i className="h-1.5 w-1.5 rounded-full bg-[#f3b23c]" />}{name === '全部' ? '全部公司' : name}</span>
+                {industryCounts.map(({ name, count }) => {
+                  const active = name === selectedIndustry;
+                  const href = name === '全部' ? '/#company-list' : `/?industry=${encodeURIComponent(name)}#company-list`;
+                  return (
+                  <Link href={href} key={name} aria-current={active ? 'true' : undefined} className={`group flex items-center justify-between border-b border-[#e0e5ef] px-1 py-3 text-sm transition ${active ? 'font-bold text-[#3657d6]' : 'text-[#657088] hover:pl-2 hover:text-[#172033]'}`}>
+                    <span className="flex items-center gap-2">{active && <i className="h-1.5 w-1.5 rounded-full bg-[#f3b23c]" />}{name === '全部' ? '全部公司' : name}</span>
                     <span className="utility text-[10px] text-[#96a0b4]">{String(count).padStart(3, '0')}</span>
-                  </a>
-                ))}
+                  </Link>
+                  );
+                })}
               </div>
             </section>
 
@@ -100,7 +109,7 @@ export default async function Home() {
             ))}
           </section>
 
-          <CompanyExplorer companies={companies} />
+          <CompanyExplorer companies={companies} selectedIndustry={selectedIndustry} />
         </div>
       </div>
     </main>
