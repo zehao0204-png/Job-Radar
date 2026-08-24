@@ -4,12 +4,11 @@ import { useEffect, useMemo, useState } from 'react';
 import type { Company, Industry, RecruitmentStatus } from '../data/companies';
 
 const PAGE_SIZE = 15;
-const statuses: Array<'全部状态' | RecruitmentStatus> = ['全部状态', '开放', '预热', '待开放', '待核验'];
+const statuses: Array<'全部状态' | RecruitmentStatus> = ['全部状态', '开放', '预热', '待开放'];
 const statusClass: Record<RecruitmentStatus, string> = {
   开放: 'border-[#88bca2] bg-[#f1faf5] text-[#237a51]',
   预热: 'border-[#e5bd69] bg-[#fff8e9] text-[#a36608]',
   待开放: 'border-[#cbd4e3] bg-[#f5f7fa] text-[#667187]',
-  待核验: 'border-[#d6dce7] bg-white text-[#7d879b]',
 };
 
 export function CompanyExplorer({ companies, selectedIndustry }: { companies: Company[]; selectedIndustry: '全部' | Industry }) {
@@ -36,7 +35,7 @@ export function CompanyExplorer({ companies, selectedIndustry }: { companies: Co
             <div>
               <p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">COMPANY DIRECTORY / 120</p>
               <h2 className="display-cn mt-2 text-2xl font-bold tracking-[-.03em]">名企官方入口索引</h2>
-              <p className="mt-2 text-xs leading-5 text-[#7a859a]">状态只采用官方公开信息；“待核验”不等于尚未开放。</p>
+              <p className="mt-2 text-xs leading-5 text-[#7a859a]">状态按官方公开信息更新；“待开放”表示暂未发现 27 届正式校招入口。</p>
             </div>
           </div>
         </div>
