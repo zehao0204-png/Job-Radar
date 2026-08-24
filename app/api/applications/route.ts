@@ -5,7 +5,7 @@ import { ensureSchema, getDb } from '../../../db';
 import { getChatGPTUser } from '../../chatgpt-auth';
 import { companies } from '../../../data/companies';
 
-const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束', '已终止'];
+const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已终止'];
 
 async function authorizedDb() {
   const user = await getChatGPTUser();
@@ -18,7 +18,7 @@ export async function GET() {
   const context = await authorizedDb();
   if (!context) return NextResponse.json({ error: '请先登录' }, { status: 401 });
   const rows = await context.db.select().from(applications).where(eq(applications.userId, context.user.userId)).orderBy(desc(applications.updatedAt));
-  return NextResponse.json(rows);
+  return NextResponse.json(rows.map((row) => row.stage === '已结束' ? { ...row, stage: '已终止' } : row));
 }
 
 export async function POST(request: Request) {

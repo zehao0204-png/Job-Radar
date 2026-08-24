@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { companies } from '../../data/companies';
 import type { Application } from '../../db/schema';
 
-const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已结束', '已终止'];
+const stages = ['准备投递', '已投递', '笔试/测评', '一面', '二面', '终面/HR面', 'Offer', '已终止'];
 
 export function ApplicationsBoard() {
   const [items, setItems] = useState<Application[]>([]);
@@ -80,11 +80,11 @@ export function ApplicationsBoard() {
 
       <section className="mt-8">
         <div className="mb-4 flex items-end justify-between">
-          <div><p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">ROUTE MAP / 09 STATIONS</p><h2 className="display-cn mt-2 text-xl font-bold">推进路径</h2></div>
+          <div><p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">ROUTE MAP / 08 STATIONS</p><h2 className="display-cn mt-2 text-xl font-bold">推进路径</h2></div>
           <p className="utility hidden text-[8px] tracking-[.1em] text-[#98a2b4] sm:block">SCROLL HORIZONTALLY →</p>
         </div>
         <div className="overflow-x-auto border-y border-[#cbd4e7] pb-4 pt-4">
-          <div className="grid min-w-[1530px] grid-cols-9 gap-px bg-[#cbd4e7] border-x border-[#cbd4e7]">
+          <div className="grid min-w-[1360px] grid-cols-8 gap-px bg-[#cbd4e7] border-x border-[#cbd4e7]">
             {stages.map((stage, stageIndex) => {
               const stageItems = items.filter((item) => item.stage === stage);
               return <div key={stage} className="min-h-[380px] bg-[#f4f6fa]">
