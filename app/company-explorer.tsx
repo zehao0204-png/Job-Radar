@@ -33,7 +33,7 @@ export function CompanyExplorer({ companies, selectedIndustry }: { companies: Co
           <div className="flex items-start gap-4">
             <span className="utility mt-1 grid h-8 w-8 shrink-0 place-items-center bg-[#172033] text-[9px] font-bold text-white">A—Z</span>
             <div>
-              <p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">COMPANY DIRECTORY / 120</p>
+              <p className="utility text-[9px] font-bold tracking-[.17em] text-[#3657d6]">COMPANY DIRECTORY / {companies.length}</p>
               <h2 className="display-cn mt-2 text-2xl font-bold tracking-[-.03em]">名企官方入口索引</h2>
               <p className="mt-2 text-xs leading-5 text-[#7a859a]">“开放”须有明确的 27 届招聘证据；“待核验”不代表尚未开放。</p>
             </div>

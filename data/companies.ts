@@ -111,6 +111,7 @@ export const companies: Company[] = [
   make('tcl', 'TCL', '制造业', 'https://zhaopin.tcl.com/campus', '开放', '27届全球校招', '以官网为准'),
   make('boe', '京东方', '制造业', 'https://boe.zhiye.com/campus/'),
   make('dji', '大疆创新', '制造业', 'https://careers.dji.com/zh-CN/campus', '开放', '27届拓疆者校招', '招满即止'),
+  make('insta360', '影石创新', '制造业', 'https://arashivision.jobs.feishu.cn/campus', '开放', '27届校园招聘', '以官网为准', '2026-08-25'),
   make('luxshare', '立讯精密', '制造业', 'https://hr.luxshare-ict.com/'),
   make('foxconn', '富士康', '制造业', 'https://recruit.foxconn.com/'),
   make('sany', '三一集团', '制造业', 'https://sanycampus.zhiye.com/4/jobs', '开放', '27届星辰计划', '招满即止'),
@@ -150,7 +151,7 @@ export const companies: Company[] = [
   make('aon', '怡安', '咨询', 'https://jobs.aon.com/'),
 ];
 
-if (companies.length !== 120) throw new Error(`Expected 120 companies, got ${companies.length}`);
+if (companies.length !== 121) throw new Error(`Expected 121 companies, got ${companies.length}`);
 
 export const industryCounts = ['全部', '互联网', '汽车', '芯片', '制造业', '咨询'].map((name) => ({
   name,
