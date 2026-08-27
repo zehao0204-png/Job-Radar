@@ -14,6 +14,8 @@ export function DeskShell({ initialView, userName, signOutHref }: { initialView:
   const openCount = companies.filter((company) => company.status === '开放').length;
   const preheatCount = companies.filter((company) => company.status === '预热').length;
   const pendingCount = companies.filter((company) => company.status === '待核验').length;
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Shanghai' }).format(new Date());
+  const todayNew = companies.filter((company) => company.status === '开放' && company.openedAt === today);
 
   useEffect(() => {
     const syncView = () => setView(window.location.pathname === '/applications' ? 'applications' : 'companies');
@@ -87,6 +89,25 @@ export function DeskShell({ initialView, userName, signOutHref }: { initialView:
 
             <section className="mt-7 grid border-y border-[#cbd4e7] bg-white/55 sm:grid-cols-3">
               {[[String(openCount).padStart(2, '0'), '已核验开放', '有明确27届招聘证据'], [String(pendingCount).padStart(2, '0'), '待核验', `另有 ${preheatCount} 家预热`], [String(companies.length), '公司入口', '覆盖五个重点行业']].map(([value, label, note], index) => <div key={label} className={`grid grid-cols-[auto_1fr] items-center gap-4 px-5 py-5 ${index < 2 ? 'border-b border-[#d8dfed] sm:border-b-0 sm:border-r' : ''}`}><strong className="utility text-3xl font-medium tracking-[-.08em] text-[#3657d6]">{value}</strong><div><p className="text-xs font-bold text-[#313c51]">{label}</p><p className="mt-1 text-[10px] text-[#8b95a8]">{note}</p></div></div>)}
+            </section>
+
+            <section aria-labelledby="today-open-title" aria-live="polite" className="mt-7 overflow-hidden border border-[#c6d0e4] bg-[#fbfcff] shadow-[8px_9px_0_rgba(243,178,60,.12)] lg:grid lg:grid-cols-[230px_minmax(0,1fr)]">
+              <div className="relative overflow-hidden bg-[#172033] px-6 py-6 text-white">
+                <span className="absolute -right-8 -top-8 h-28 w-28 rounded-full border border-[#41506a]" aria-hidden="true" />
+                <span className="absolute -right-3 top-5 h-16 w-16 rounded-full border border-[#41506a]" aria-hidden="true" />
+                <div className="relative flex items-center gap-2"><i className="h-2 w-2 rounded-full bg-[#f3b23c] shadow-[0_0_0_5px_rgba(243,178,60,.13)]" /><p className="utility text-[9px] font-bold tracking-[.18em] text-[#f3c66b]">LIVE SIGNAL / {today.slice(5).replace('-', '.')}</p></div>
+                <div className="relative mt-5 flex items-end justify-between gap-4"><div><h2 id="today-open-title" className="display-cn text-2xl font-bold">今日新开</h2><p className="mt-2 text-[11px] leading-5 text-[#aeb8ca]">当天首次确认开放的机会</p></div><strong className="utility text-4xl font-medium tracking-[-.08em] text-[#f3b23c]">{String(todayNew.length).padStart(2, '0')}</strong></div>
+              </div>
+              {todayNew.length ? (
+                <div className="grid divide-y divide-[#d7deeb] md:grid-cols-2 md:divide-x md:divide-y-0">
+                  {todayNew.map((company) => <article key={company.id} className="group relative px-6 py-5 transition hover:bg-white">
+                    <span className="utility text-[8px] font-bold tracking-[.15em] text-[#3657d6]">NEW OPEN / {company.industry}</span>
+                    <div className="mt-3 flex items-start justify-between gap-5"><div><h3 className="display-cn text-lg font-bold text-[#172033]">{company.name}</h3><p className="mt-1.5 text-[11px] leading-5 text-[#788397]">{company.batch} · {company.deadline}</p></div><a href={company.url} target="_blank" rel="noreferrer" className="utility shrink-0 border-b border-[#3657d6] pb-1 text-[9px] font-bold text-[#3657d6] transition group-hover:text-[#172033]">立即查看 ↗</a></div>
+                  </article>)}
+                </div>
+              ) : (
+                <div className="flex min-h-32 items-center gap-5 px-6 py-6 sm:px-8"><span className="utility grid h-12 w-12 shrink-0 place-items-center border border-dashed border-[#9eabc1] text-[9px] font-bold text-[#718099]">SCAN</span><div><p className="text-sm font-bold text-[#344057]">今日暂无新确认开放</p><p className="mt-2 text-xs leading-5 text-[#7f8a9e]">下一轮自动核验将在工作日上午 11:00 完成，有变化会直接出现在这里。</p></div></div>
+              )}
             </section>
 
             <CompanyExplorer companies={companies} selectedIndustry={industry} />

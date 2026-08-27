@@ -10,6 +10,7 @@ export type Company = {
   batch: string;
   deadline: string;
   verifiedAt: string;
+  openedAt: string;
 };
 
 const make = (
@@ -21,7 +22,8 @@ const make = (
   batch = '27届状态待核验',
   deadline = '待官方公布',
   verifiedAt = '2026-08-24',
-): Company => ({ id, name, industry, url, status, batch, deadline, verifiedAt });
+  openedAt = '',
+): Company => ({ id, name, industry, url, status, batch, deadline, verifiedAt, openedAt });
 
 export const companies: Company[] = [
   make('alibaba', '阿里巴巴', '互联网', 'https://campus-talent.alibaba.com/campus/gov', '开放', '27届正式校招', '以官网为准'),
